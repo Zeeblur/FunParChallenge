@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.codehaus.groovy.eclipse.groovyScriptLaunchConfiguration">
+<stringAttribute key="org.codehaus.groovy.eclipse.launch.runType" value="c25.RunPlayer"/>
+<listAttribute key="org.eclipse.jdt.launching.CLASSPATH">
+<listEntry value="D:\UniWork\Year3\FunPar\ucape-examples\bin"/>
+<listEntry value="C:\Users\Zoeoeh\.p2\pool\plugins\org.codehaus.groovy_2.4.8.xx-201702121720-e46\lib\groovy-all-2.4.8.jar"/>
+<listEntry value="C:\Users\Zoeoeh\.p2\pool\plugins\org.codehaus.groovy_2.4.8.xx-201702121720-e46\lib\bsf-2.4.0.jar"/>
+<listEntry value="C:\Users\Zoeoeh\.p2\pool\plugins\org.codehaus.groovy_2.4.8.xx-201702121720-e46\lib\ivy-2.4.0.jar"/>
+<listEntry value="C:\Users\Zoeoeh\.p2\pool\plugins\org.codehaus.groovy_2.4.8.xx-201702121720-e46\lib\servlet-api-2.4.jar"/>
+<listEntry value="C:\Users\Zoeoeh\.groovy\greclipse\global_dsld_support"/>
+<listEntry value="C:\Users\Zoeoeh\.p2\pool\plugins\org.codehaus.groovy_2.4.8.xx-201702121720-e46\plugin_dsld_support\"/>
+<listEntry value="D:\UniWork\Year3\FunPar\UCaPE-J8-G2.4-14102016\GroovyParallel-Groovy2.4-14102016.jar"/>
+<listEntry value="D:\UniWork\Year3\FunPar\UCaPE-J8-G2.4-14102016\JCSP-Java8-14102016.jar"/>
+<listEntry value="D:\UniWork\Year3\FunPar\UCaPE-J8-G2.4-14102016\junit.jar"/>
+<listEntry value="D:\UniWork\Year3\FunPar\UCaPE-J8-G2.4-14102016\phwclasses.jar"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.codehaus.groovy.tools.GroovyStarter"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="--classpath &quot;${workspace_loc:\ChapterExamples}\src;D:\UniWork\Year3\FunPar\UCaPE-J8-G2.4-14102016\GroovyParallel-Groovy2.4-14102016.jar;D:\UniWork\Year3\FunPar\UCaPE-J8-G2.4-14102016\JCSP-Java8-14102016.jar;D:\UniWork\Year3\FunPar\UCaPE-J8-G2.4-14102016\junit.jar;D:\UniWork\Year3\FunPar\UCaPE-J8-G2.4-14102016\phwclasses.jar;${workspace_loc:\ChapterExamples}\bin&quot; --main groovy.ui.GroovyMain &quot;${resource_loc:/ChapterExamples/src/c25/RunPlayer.groovy}&quot;"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="ChapterExamples"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value=" -Dgroovy.home=&quot;${groovy_home}&quot;"/>
+<stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc:\ChapterExamples}"/>
+</launchConfiguration>
