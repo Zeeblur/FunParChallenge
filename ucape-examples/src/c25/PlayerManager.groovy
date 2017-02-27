@@ -137,8 +137,8 @@ class PlayerManager implements CSProcess {
 		IPconfig.write("Now Connected - sending your name to Controller")
 		def enrolPlayer = new EnrolPlayer( name: playerName,
 										   toPlayerChannelLocation: fromControllerLoc)
-		toController.write(enrolPlayer)
-		def enrolDetails = (EnrolDetails)fromController.read()
+		toController.write(enrolPlayer) // Request as client to controller server
+		def enrolDetails = (EnrolDetails)fromController.read() 	// read response from controller server
 		def myPlayerId = enrolDetails.id
 		def enroled = true
 		def unclaimedPairs = 0
@@ -195,11 +195,10 @@ class PlayerManager implements CSProcess {
 							chosenPairs[currentPair] = vPoint
 							currentPair = currentPair + 1
 							def pairData = pairsMap.get(vPoint)
-							changePairs(vPoint[0], vPoint[1], pairData[1], pairData[0])
+							println "click and change colour"
+							//changePairs(vPoint[0], vPoint[1], pairData[1], pairData[0])
 							def matchOutcome = pairsMatch(pairsMap, chosenPairs)
-							
-							createBoard()
-							
+														
 							// wrong pair
 							if ( matchOutcome == 2)  {
 								nextPairConfig.write("SELECT NEXT PAIR")
@@ -214,6 +213,9 @@ class PlayerManager implements CSProcess {
 										changePairs(p2[0], p2[1], Color.LIGHT_GRAY, -1)
 										chosenPairs = [null, null]
 										currentPair = 0
+										
+										/// change turn
+										
 										break
 									case WITHDRAW:
 										// withdraw from game

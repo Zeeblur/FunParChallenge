@@ -202,6 +202,7 @@ class ControllerManager implements CSProcess{
 				} else if ( o instanceof GetGameDetails) {
 					def ggd = (GetGameDetails)o
 					def id = ggd.id
+					println "player ID gg request " + id
 					toPlayers[id].write(new GameDetails( playerDetails: playerMap,
 													 	 pairsSpecification: pairsMap,
 														 gameId: gameId))
