@@ -1,7 +1,7 @@
 \def\mytitle{Challenge - Pairs Game}
 \def\myauthor{Emmanuel Miras \newline Zoe Wall}
 \def\contact{40168970@napier.ac.uk \newline40182161@napier.ac.uk}
-\def\mymodule{Fundamentals of Parallel Systems (SET09109)}
+\def\mymodule{Fundamentals of Parallel Systems (SET09109}
 
 \documentclass[10pt, a4paper]{article}
 \usepackage[a4paper,outer=1.5cm,inner=1.5cm,top=1.75cm,bottom=1.5cm]{geometry}
@@ -76,6 +76,9 @@
 \sloppy
 \begin{document}
 	\maketitle	
+	
+	
+	Preferred practical class to demonstrate: either afternoon sessions.
 	\section{Requirement 3}
 	
 	\subsection{Process Network}
@@ -87,15 +90,13 @@
 	\figuremacro{H}{channelInt}{Channel Interaction Sequence}{ - diagram to show the sequence of interactions between channels.}{1.0}
 	
 	\subsection{Explanation}
-	\hfill	
 	
+	The above diagrams detail a modified version of the Pairs Game system to add the functionality of taking turns and dynamically updating every players interface to match the game state.
 	
-	The main change to the communications structure is to modify the behaviour of both the Player Manager and Controller Manager. To correct the issue of updating the user interface for all players, the Controller Manager must act as a pure client to be able to send requests to every Player Manager.
+	\subparagraph{Turns}	
+	To implement player turns, the Controller Manager must keep track of every player initialised within a list. To initialise a player, a modified EnrolPlayer object, which contains the location of the player sending the request and the player id, is copied to the Controller Manager. Once the player has been enrolled they are added to a list of current players, which the Controller Manager can iterate through to request for card selections and send a map of square coordinates for updating the game state.
 	
-
-
-\clearpage
-\section{Appendix}
-
+	\subparagraph{Updates}
+	The main change to the communications structure is to modify the behaviour of both the Player Manager and Controller Manager.	The proposed solution is to have multiple channel inputs to the Player Manager that are allocated dynamically once the player has been enrolled. In doing so, each of the Player Managers can act as pure servers. This means that the Controller Manager can issue requests to every Player Manager to update their interfaces without the risk of dead-lock. With the current structure, this causes an issue with the enrolment of players as they must initiate the connection to the Controller Manager therefore acting as clients. To solve this, the enrolment logic from the Player Manager is abstracted into another process which can act as a client. An enrolment request can therefore be copied through an event handling system using an overwriting buffer to the Controller Manager client that obeys the client-server pattern.
 		
 \end{document}

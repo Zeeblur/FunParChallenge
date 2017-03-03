@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6210 64-bit) (preloaded format=pdflatex 2017.2.12)  3 MAR 2017 15:52
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9.6210 64-bit) (preloaded format=pdflatex 2017.2.12)  3 MAR 2017 17:15
 entering extended mode
 **./report.tex
 (report.tex
@@ -524,24 +524,24 @@ LaTeX Info: Redefining \nameref on input line 77.
 
 \c@lstlisting=\count135
 LaTeX Font Info:    Font shape `T1/ua1/bx/n' in size <14.4> not available
-(Font)              Font shape `T1/ua1/b/n' tried instead on input line 79.
+(Font)              Font shape `T1/ua1/b/n' tried instead on input line 82.
 LaTeX Font Info:    Font shape `T1/ua1/bx/n' in size <12> not available
-(Font)              Font shape `T1/ua1/b/n' tried instead on input line 81.
+(Font)              Font shape `T1/ua1/b/n' tried instead on input line 84.
 
 <./images/processNetwork.png, id=23, 741.77126pt x 494.84875pt>
 File: ./images/processNetwork.png Graphic file (type png)
 
 <use ./images/processNetwork.png>
-Package pdftex.def Info: ./images/processNetwork.png used on input line 83.
+Package pdftex.def Info: ./images/processNetwork.png used on input line 86.
 (pdftex.def)             Requested size: 512.14963pt x 341.67253pt.
 LaTeX Font Info:    Font shape `T1/ua1/bx/n' in size <10> not available
-(Font)              Font shape `T1/ua1/b/n' tried instead on input line 83.
+(Font)              Font shape `T1/ua1/b/n' tried instead on input line 86.
 
 <./images/channelInt.png, id=25, 1287.81125pt x 478.78876pt>
 File: ./images/channelInt.png Graphic file (type png)
 
 <use ./images/channelInt.png>
-Package pdftex.def Info: ./images/channelInt.png used on input line 87.
+Package pdftex.def Info: ./images/channelInt.png used on input line 90.
 (pdftex.def)             Requested size: 512.14963pt x 190.41624pt.
  [1
 
@@ -552,44 +552,52 @@ ate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.88 
-      <./images/processNetwork.png>] [2pdfTeX warning (ext4): destination with 
-the same identifier (name{figure.2}) has been already used, duplicate ignored
+l.91 
+      <./images/processNetwork.png>]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 102.
+ [2pdfTeX warning (ext4): destination with the same identifier (name{figure.2})
+ has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.94 \clearpage
-                <./images/channelInt.png>]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 98.
- [3
-
-]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 98.
+l.102 \end{document}
+                     <./images/channelInt.png>]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 102.
  (report.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 98.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 98.
-Package rerunfilecheck Info: File `report.out' has not changed.
-(rerunfilecheck)             Checksum: 20A32938DC688D6BA4E2FFBF76717B74;288.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 98.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 102.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 102.
+
+
+Package rerunfilecheck Warning: File `report.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `report.out':
+(rerunfilecheck)             Before: 20A32938DC688D6BA4E2FFBF76717B74;288
+(rerunfilecheck)             After:  EC8E34A82F1E5AC0914C260D02B241B2;244.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 102.
  )
 (\end occurred inside a group at level 1)
 
 ### simple group (level 1) entered at line 1061 ({)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 9925 strings out of 493333
- 141985 string characters out of 3139191
- 381328 words of memory out of 3000000
- 13307 multiletter control sequences out of 15000+200000
+ 9929 strings out of 493333
+ 142072 string characters out of 3139191
+ 383327 words of memory out of 3000000
+ 13312 multiletter control sequences out of 15000+200000
  48711 words of font info for 40 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 33i,7n,58p,289b,2250s stack positions out of 5000i,500n,10000p,200000b,50000s
-{D:/Program Files/MiKTeX 2.9/fonts/enc/dvips/base/8r.enc}<D:/Pr
-ogram Files/MiKTeX 2.9/fonts/type1/urw/arial/ua1b8a.pfb><D:/Program Files/MiKTe
-X 2.9/fonts/type1/urw/arial/ua1r8a.pfb>
-Output written on report.pdf (3 pages, 89064 bytes).
+ 33i,7n,58p,962b,2257s stack positions out of 5000i,500n,10000p,200000b,50000s
+pdfTeX warning (dest): name{section.2} has been referenced but 
+does not exist, replaced by a fixed one
+
+{D:/Program Files/MiKTeX 2.9/fonts/enc/dvips/base/8r.enc}<D:/Program Files/MiKT
+eX 2.9/fonts/type1/urw/arial/ua1b8a.pfb><D:/Program Files/MiKTeX 2.9/fonts/type
+1/urw/arial/ua1r8a.pfb>
+Output written on report.pdf (2 pages, 90385 bytes).
 PDF statistics:
- 58 PDF objects out of 1000 (max. 8388607)
- 11 named destinations out of 1000 (max. 500000)
+ 54 PDF objects out of 1000 (max. 8388607)
+ 10 named destinations out of 1000 (max. 500000)
  51 words of extra memory for PDF output out of 10000 (max. 10000000)
 
