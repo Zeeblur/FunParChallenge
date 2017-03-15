@@ -133,11 +133,8 @@ class PlayerManager implements CSProcess {
 		playerManLoc.write(fromControllerLoc) // response
 		
 		println "sent waiting"
-		//fromController.read()
-		
-		println "got answer"
-
-		def enroled = false
+		fromController.read()
+		def enroled = true
 			// main loop
 			while (enroled) {
 				/*

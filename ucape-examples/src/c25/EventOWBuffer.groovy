@@ -27,7 +27,7 @@ class EventOWBuffer implements CSProcess
 		
 		switch ( index ) {
 		  case INCHANNEL:
-			event = inChannelFromRec.read()// may need copy
+			event = inChannelFromRec.read().copy()// may need copy
 			preCon[GETCHANNEL] = true
 			break
 			

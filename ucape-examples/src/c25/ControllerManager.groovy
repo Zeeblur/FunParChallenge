@@ -176,17 +176,21 @@ class ControllerManager implements CSProcess{
 			createPairs (nPairs)
 			statusConfig.write("Running")
 			def running = (pairsUnclaimed != 0)
+			
 			while (running){
 
 				//def o = receiveEvent.read()
 				def s = 1
+				
+				println "s"
 				getEvent.write(s)
-				def o = receiveEvent.read()//.copy()
-				////getEvent.write( e ) Go read to player etc 
 				
+				println "get"
+				def o = receiveEvent.read().copy()
 				
+				println "receive"
 				
-				
+				println "a"
 				// enrolevent instance
 				if (o instanceof EnrolEvent)
 				{
@@ -200,21 +204,26 @@ class ControllerManager implements CSProcess{
 					
 					println "$playerToAddr"
 					def playerToChan = NetChannel.one2net(playerToAddr)
-					/*
+					
 					//println "name: ${playerDetails.name}"
 					if (availablePlayerIds.size() > 0) {
 						currentPlayerId = availablePlayerIds. pop()
+						println " 1"
 						playerNames[currentPlayerId].write(playerName)
+						println " 2"
 						pairsWon[currentPlayerId].write(" " + 0)
 						toPlayers[currentPlayerId] = playerToChan
+						println " 3"
+						println "curr player id: " + currentPlayerId + " " + toPlayers[currentPlayerId]
 						toPlayers[currentPlayerId].write(new EnrolDetails(id: currentPlayerId) )
+						println " 4"
 						playerMap.put(currentPlayerId, [playerName, 0]) // [name, pairs claimed]
 					}
 					else
 					{
 						// no new players can join the game
 						playerToChan.write(new EnrolDetails(id: -1))
-					} */
+					} 
 				}
 				else if ( o instanceof GetGameDetails) 
 				{
