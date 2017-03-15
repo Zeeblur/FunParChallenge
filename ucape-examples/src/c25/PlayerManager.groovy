@@ -14,14 +14,14 @@ class PlayerManager implements CSProcess {
 	DisplayList dList
 	ChannelOutputList playerNames
 	ChannelOutputList pairsWon
-	ChannelOutput IPlabel
-	ChannelInput IPfield
-	ChannelOutput IPconfig
+
 	ChannelInput withdrawButton
 	ChannelInput nextButton
 	ChannelOutput getValidPoint
 	ChannelInput validPoint
 	ChannelOutput nextPairConfig
+	
+	ChannelInput initialisePlayer
 	
 	int maxPlayers = 8
 	int side = 50
@@ -117,42 +117,17 @@ class PlayerManager implements CSProcess {
 		def WITHDRAW = 1
 		createBoard()
 		dList.set(display)
-		IPlabel.write("What is your name?")
-		def playerName = IPfield.read()
-		IPconfig.write(" ")
-		IPlabel.write("What is the IP address of the game controller?")
-		def controllerIP = IPfield.read().trim()
-		IPconfig.write(" ")
-		IPlabel.write("Connecting to the GameController")
 		
-		// create Node and Net Channel Addresses
-		def nodeAddr = new TCPIPNodeAddress (4000)
-		Node.getInstance().init (nodeAddr)
-		def toControllerAddr = new TCPIPNodeAddress ( controllerIP, 3000)
-		def toController = NetChannel.any2net(toControllerAddr, 50 )
-		def fromController = NetChannel.net2one()
-		def fromControllerLoc = fromController.getLocation()
+		// removed stuff here
+		//def fromController = NetChannel.net2one()
+		//def fromControllerLoc = fromController.getLocation()
 		
-		// connect to game controller
-		IPconfig.write("Now Connected - sending your name to Controller")
-		def enrolPlayer = new EnrolPlayer( name: playerName,
-										   toPlayerChannelLocation: fromControllerLoc)
-		toController.write(enrolPlayer) // Request as client to controller server
-		def enrolDetails = (EnrolDetails)fromController.read() 	// read response from controller server
-		def myPlayerId = enrolDetails.id
-		def enroled = true
-		def unclaimedPairs = 0
-		if (myPlayerId == -1) {
-			enroled = false
-			IPlabel.write("Sorry " + playerName + ", there are too many players enroled in this PAIRS game")
-			IPconfig.write("  Please close the game window")
-		}
-		else {
-			IPlabel.write("Hi " + playerName + ", you are now enroled in the PAIRS game")
-			IPconfig.write(" ")	
-			
+		//initialisePlayer.read()
+
+		def enroled = false
 			// main loop
 			while (enroled) {
+				/*
 				def chosenPairs = [null, null]
 				createBoard()
 				dList.change (display, 0)
@@ -235,8 +210,10 @@ class PlayerManager implements CSProcess {
 							break
 					}// end of outer switch	
 				} // end of while getting two pairs
-			} // end of while enrolled loop
-			IPlabel.write("Goodbye " + playerName + ", please close game window")
+			} // end of while enrolled loop */
+				println "kek"
+			
+			//IPlabel.write("Goodbye " + playerName + ", please close game window")
 		} //end of enrolling test
 	} // end run
 }				

@@ -33,10 +33,12 @@ class Player implements CSProcess {
 		def receivePoint = Channel.createOne2One()
 		def getPoint = Channel.createOne2One()
 
-		def network = [ new PlayerManager (dList: dList,
-										   IPlabel: IPlabelConfig.out(),
+		def network = [ new EnrolPlayer (  IPlabel: IPlabelConfig.out(),
 										   IPfield: IPenterField.in(),
-										   IPconfig: IPfieldConfig.out(),
+										   IPconfig: IPfieldConfig.out()),
+			
+			new PlayerManager (				dList: dList,
+
 										   playerNames: playerNamesOut,
 										   pairsWon: pairsWonOut,
 										   nextButton: nextButtonChannel.in(),
