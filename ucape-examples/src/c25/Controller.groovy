@@ -22,9 +22,22 @@ class Controller implements CSProcess {
 		def pairsWonIn = new ChannelInputList(pairsWon)
 		def pairsWonOut = new ChannelOutputList(pairsWon)
 		
-		def network = [ new ControllerManager ( dList: dList,
+		def enrolToBuffer = new Channel().createOne2One()
+		def receiveEvent = new Channel().createOne2One()
+		def getEvent = new Channel().createOne2One()
+		
+		def network = [ 
+			new EventReceiver (IPlabelConfig: IPlabelConfig.out(),
+				eventOut: enrolToBuffer.out()),
+			
+			
+			new EventOWBuffer (inChannelFromRec: enrolToBuffer.in(),
+				getChannelFromCon: getEvent.in(),
+				outChannelToCon: receiveEvent.out()),
+			new ControllerManager ( dList: dList,
 												statusConfig: statusConfig.out(),
-												IPlabelConfig: IPlabelConfig.out(),
+												receiveEvent: receiveEvent.in(),
+												getEvent: getEvent.out(),
 												pairsConfig: pairsConfig.out(),
 												playerNames: playerNamesOut,
 												pairsWon: pairsWonOut,

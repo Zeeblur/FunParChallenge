@@ -20,11 +20,14 @@ import org.jcsp.net2.mobile.*;
 
 class ControllerManager implements CSProcess{
 	DisplayList dList
-	ChannelOutput IPlabelConfig
+
 	ChannelOutput statusConfig
 	ChannelOutput pairsConfig
 	ChannelOutputList playerNames
 	ChannelOutputList pairsWon
+	
+	ChannelInput receiveEvent
+	ChannelOutput getEvent
 
 	int maxPlayers = 8
 	int side = 50
@@ -148,16 +151,10 @@ class ControllerManager implements CSProcess{
 				dList.change(changeGraphics, 4 + (x2*5*boardSize) + (y2*5))
 			}
 		} // end createPairs
+		
+		
+		// removed node
 
-		// create a Node and the fromPlayers net channel
-		def nodeAddr = new TCPIPNodeAddress (3000)
-		Node.getInstance().init (nodeAddr)
-		IPlabelConfig.write(nodeAddr.getIpAddress())
-		//println "Controller IP address = ${nodeAddr.getIpAddress()}"
-
-		def fromPlayers = NetChannel.net2one()
-		def fromPlayersLoc = fromPlayers.getLocation()
-		//println "Controller: fromPlayer channel location - ${fromPlayersLoc.toString()}"
 
 		def toPlayers = new ChannelOutputList()
 		for ( p in 0..<maxPlayers) toPlayers.append(null)
@@ -181,8 +178,15 @@ class ControllerManager implements CSProcess{
 			def running = (pairsUnclaimed != 0)
 			while (running){
 
-				def o = fromPlayers.read()
-
+				//def o = receiveEvent.read()
+				def s = 1
+				getEvent.write(s)
+				def o = receiveEvent.read()//.copy()
+				////getEvent.write( e ) Go read to player etc 
+				
+				
+				
+				
 				// enrolevent instance
 				if (o instanceof EnrolEvent)
 				{
