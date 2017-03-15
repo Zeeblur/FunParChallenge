@@ -157,7 +157,9 @@ class ControllerManager implements CSProcess{
 
 
 		def toPlayers = new ChannelOutputList()
+		def fromPlayers = new ChannelInputList()
 		for ( p in 0..<maxPlayers) toPlayers.append(null)
+		for ( p in 0..<maxPlayers) fromPlayers.append(null)
 		def currentPlayerId = 0
 		def playerMap = [:]
 
@@ -201,8 +203,7 @@ class ControllerManager implements CSProcess{
 					
 					def playerToAddr = playerDetails.toPlayerChannelLocation
 					
-				    def fromController = NetChannel.net2one()
-					def fromLoc = fromController.getLocation()
+
 					
 					println "$playerToAddr"
 					def playerToChan = NetChannel.one2net(playerToAddr)
@@ -215,18 +216,21 @@ class ControllerManager implements CSProcess{
 						println " 2"
 						pairsWon[currentPlayerId].write(" " + 0)
 						toPlayers[currentPlayerId] = playerToChan
-						println " 3"
+						
 						println "curr player id: " + currentPlayerId + " " + toPlayers[currentPlayerId]
 						
+						fromPlayers[currentPlayerId] = NetChannel.net2one()
+						def fromLoc = fromPlayers[currentPlayerId].getLocation()
+						println " 3"
 						// send location to channel
-						toPlayers[currentPlayerId].write(fromLoc)//)
+						toPlayers[currentPlayerId].write(fromLoc)
 						
-						def a = fromController.read()
+						def a = fromPlayers[currentPlayerId].read()
 						
 						
 						
 						// new EnrolDetails(id: currentPlayerId) )
-						println " 4 $a"
+						println " 4 from $currentPlayerId $a"
 						playerMap.put(currentPlayerId, [playerName, 0]) // [name, pairs claimed]
 					}
 					else
