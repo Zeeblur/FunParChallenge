@@ -24,6 +24,8 @@ class EnrolPlayer implements CSProcess {
 	ChannelInput IPfield
 	ChannelOutput IPconfig
 	
+	ChannelInput playerManLoc
+	ChannelOutput initialisePlayer
 	
 	@Override
 	public void run() {
@@ -35,25 +37,29 @@ class EnrolPlayer implements CSProcess {
 		IPconfig.write(" ")
 		IPlabel.write("Connecting to the GameController")
 		
-		
-		println "connected"
-		
+
+	
 		// create Node and Net Channel Addresses
+		// create node first
 		def nodeAddr = new TCPIPNodeAddress (4000)
 		Node.getInstance().init (nodeAddr)
+		
+
 		def toControllerAddr = new TCPIPNodeAddress ( controllerIP, 3000)
 		def toController = NetChannel.any2net(toControllerAddr, 50 )
 
+		initialisePlayer.write()
+		println "waiting for location"
+		def fromControllerLoc = playerManLoc.read()
 		println "to controller fin"
-		//def fromController = NetChannel.net2one()
-		//def fromControllerLoc = fromController.getLocation()
+
 		
 		// connect to game controller
 		IPconfig.write("Now Connected - sending your name to Controller")
 		
 		// replace with send to player
-		def enrolEvent = new EnrolEvent( name: name)
-			//toPlayerChannelLocation: fromControllerLoc)
+		def enrolEvent = new EnrolEvent( name: name,
+			toPlayerChannelLocation: fromControllerLoc)
 		println " sending $name"
 		toController.write(enrolEvent) // Request as client to controller server
 		println " sent $name"

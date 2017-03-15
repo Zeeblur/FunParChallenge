@@ -21,6 +21,9 @@ class PlayerManager implements CSProcess {
 	ChannelInput validPoint
 	ChannelOutput nextPairConfig
 	
+	
+	ChannelOutput playerManLoc
+	
 	ChannelInput initialisePlayer
 	
 	int maxPlayers = 8
@@ -119,10 +122,20 @@ class PlayerManager implements CSProcess {
 		dList.set(display)
 		
 		// removed stuff here
-		//def fromController = NetChannel.net2one()
-		//def fromControllerLoc = fromController.getLocation()
 		
-		//initialisePlayer.read()
+		// wait for reading
+		initialisePlayer.read()
+
+		// create channel after node 
+		def fromController = NetChannel.net2one()
+		def fromControllerLoc = fromController.getLocation()
+
+		playerManLoc.write(fromControllerLoc) // response
+		
+		println "sent waiting"
+		//fromController.read()
+		
+		println "got answer"
 
 		def enroled = false
 			// main loop

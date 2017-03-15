@@ -2,6 +2,7 @@ package c25
 
 import org.jcsp.awt.*
 import org.jcsp.lang.*
+import org.jcsp.net2.tcpip.TCPIPNodeAddress
 import org.jcsp.util.*
 import org.jcsp.groovy.*
 
@@ -32,13 +33,18 @@ class Player implements CSProcess {
 		def validPoint = Channel.createOne2One()
 		def receivePoint = Channel.createOne2One()
 		def getPoint = Channel.createOne2One()
+		def playerMan = Channel.createOne2One()
+		def playerInit = Channel.createOne2One()
 
 		def network = [ new EnrolPlayer (  IPlabel: IPlabelConfig.out(),
 										   IPfield: IPenterField.in(),
-										   IPconfig: IPfieldConfig.out()),
+										   IPconfig: IPfieldConfig.out(),
+										   playerManLoc: playerMan.in(),
+										   initialisePlayer: playerInit.out()),
 			
-			new PlayerManager (				dList: dList,
-
+						new PlayerManager (dList: dList,
+										   playerManLoc: playerMan.out(),
+										   initialisePlayer: playerInit.in(),
 										   playerNames: playerNamesOut,
 										   pairsWon: pairsWonOut,
 										   nextButton: nextButtonChannel.in(),
