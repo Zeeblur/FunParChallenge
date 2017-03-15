@@ -221,7 +221,7 @@ class PlayerManager implements CSProcess {
 					}// end of outer switch	
 				} // end of while getting two pairs
 			} // end of while enrolled loop */
-				println "kek"
+				//println "kek"
 			
 			//IPlabel.write("Goodbye " + playerName + ", please close game window")
 		} //end of enrolling test

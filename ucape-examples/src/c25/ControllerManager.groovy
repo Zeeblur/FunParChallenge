@@ -176,13 +176,13 @@ class ControllerManager implements CSProcess{
 			createPairs (nPairs)
 			statusConfig.write("Running")
 			def running = (pairsUnclaimed != 0)
-			
+			def s = 1
 			while (running){
 
 				//def o = receiveEvent.read()
-				def s = 1
+	
 				
-				println "s"
+				println "s s = $s"
 				getEvent.write(s)
 				
 				println "get"

@@ -30,7 +30,11 @@ class EventReceiver implements CSProcess {
 		
 	//	println "Controller: fromPlayer channel location - ${fromPlayersLoc.toString()}"
 
-		eventOut.write(fromPlayers.read())
+		while(true)
+		{
+			def e = fromPlayers.read().copy()
+			eventOut.write(e)
+		}
 	}
 
 }
