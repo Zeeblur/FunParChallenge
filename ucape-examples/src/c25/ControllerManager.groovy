@@ -177,30 +177,32 @@ class ControllerManager implements CSProcess{
 			statusConfig.write("Running")
 			def running = (pairsUnclaimed != 0)
 			def s = 1
-			while (running){
+			while (running)
+			{
 
-				//def o = receiveEvent.read()
-	
-				
-				println "s s = $s"
+				// request for player enrolment (if any)
 				getEvent.write(s)
 				
-				println "get"
-				def o = receiveEvent.read().copy()
-				
-				println "receive"
-				
-				println "a"
-				// enrolevent instance
-				if (o instanceof EnrolEvent)
+				// read response
+				def responseFromBuffer = receiveEvent.read() 
+
+				if (responseFromBuffer == null)
+				{
+				//	println "nulll"
+					// do nothing
+				}
+				else if (responseFromBuffer instanceof EnrolEvent)
 				{
 					
-					def playerDetails = (EnrolEvent)o
+					def playerDetails = (EnrolEvent)responseFromBuffer
 					def playerName = playerDetails.name
 					
 					println "player name ${playerName}"
 					
 					def playerToAddr = playerDetails.toPlayerChannelLocation
+					
+				    def fromController = NetChannel.net2one()
+					def fromLoc = fromController.getLocation()
 					
 					println "$playerToAddr"
 					def playerToChan = NetChannel.one2net(playerToAddr)
@@ -215,8 +217,16 @@ class ControllerManager implements CSProcess{
 						toPlayers[currentPlayerId] = playerToChan
 						println " 3"
 						println "curr player id: " + currentPlayerId + " " + toPlayers[currentPlayerId]
-						toPlayers[currentPlayerId].write(new EnrolDetails(id: currentPlayerId) )
-						println " 4"
+						
+						// send location to channel
+						toPlayers[currentPlayerId].write(fromLoc)//)
+						
+						def a = fromController.read()
+						
+						
+						
+						// new EnrolDetails(id: currentPlayerId) )
+						println " 4 $a"
 						playerMap.put(currentPlayerId, [playerName, 0]) // [name, pairs claimed]
 					}
 					else
@@ -224,6 +234,14 @@ class ControllerManager implements CSProcess{
 						// no new players can join the game
 						playerToChan.write(new EnrolDetails(id: -1))
 					} 
+				}
+
+				/*
+				// enrolevent instance
+				if (o instanceof EnrolEvent)
+				{
+					
+					
 				}
 				else if ( o instanceof GetGameDetails) 
 				{
@@ -274,11 +292,15 @@ class ControllerManager implements CSProcess{
 					 pairsWon[id].write("   ")
 					 toPlayers[id] = null
 					 availablePlayerIds << id
-					 availablePlayerIds =  availablePlayerIds.sort().reverse()*/
+					 availablePlayerIds =  availablePlayerIds.sort().reverse()
 
 					println "hello"
 				} // end else if chain
+				
+				*/
 			} // while running
+			
+			
 			createBoard()
 			dList.change(display, 0)
 		} // end while true

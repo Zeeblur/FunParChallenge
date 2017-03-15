@@ -16,30 +16,37 @@ class EventOWBuffer implements CSProcess
 	  def GETCHANNEL = 1
 	  def preCon = new boolean[2]
 	  preCon[INCHANNEL] = true
-	  preCon[GETCHANNEL] = false
-	  //def e = new EventData ()
-	  //def missed = -1
+	  preCon[GETCHANNEL] = true
 	  
 	  def event
+	  def reading = false
 	  
 	  while (true) {
-		println "evendfsdfsedfsdfsd"
+
+		// chose between in from reciever and get channel
 		def index = owbAlt.priSelect ( preCon )
-		println "index $index"
+
 		switch ( index ) {
 		  case INCHANNEL:
-		   println "event inchannel"
-			event = inChannelFromRec.read().copy()// may need copy
-			preCon[GETCHANNEL] = true
-			println "in channel case"
+
+			event = inChannelFromRec.read().copy()
+
+			// enrol player event has been read * don't set event to null
+			reading = true
 			break
 			
 		  case GETCHANNEL:
-		  	println "get channel read"
+
 			def s = getChannelFromCon.read()
+
+			// if not read from enrolplayer event is null
+			if (!reading)
+				event = null
+				
 			outChannelToCon.write ( event )
-			preCon[GETCHANNEL] = false
-			println "get channel break"
+			
+			// reading is finished
+			reading = false
 			break
 			
 		}  // end switch
