@@ -8,4 +8,5 @@ class GameDetails implements Serializable {
 	def pairsSpecification = null
 	// update information
 	
+	def currentPlayer
 }

@@ -153,6 +153,8 @@ class PlayerManager implements CSProcess {
 		// main loop
 		while (enroled)
 		{ 
+			
+			
 			def chosenPairs = [null, null]
 			createBoard()
 			dList.change (display, 0)
@@ -178,6 +180,16 @@ class PlayerManager implements CSProcess {
 			}
 			def currentPair = 0
 			def notMatched = true
+			
+			while (gameDetails.currentPlayer == playerId)
+			{
+				println "it's my turn $playerId"
+			}
+			
+			
+			
+			
+			/*
 			while ((chosenPairs[1] == null) && (enroled) && (notMatched)) {
 				println "while"
 
@@ -229,10 +241,10 @@ class PlayerManager implements CSProcess {
 						} else if ( matchOutcome == 1) {
 							notMatched = false
 							// match found send to controller new pair claimed
-						//	toController.write(new ClaimPair ( id: myPlayerId,
-							//gameId: gameId,
-						//	p1: chosenPairs[0],
-							//p2: chosenPairs[1]))
+							toController.write(new ClaimPair ( id: myPlayerId,
+							gameId: gameId,
+							p1: chosenPairs[0],
+							p2: chosenPairs[1]))
 						}//
 						break
 				}// end of outer switch

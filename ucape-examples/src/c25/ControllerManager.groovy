@@ -36,7 +36,7 @@ class ControllerManager implements CSProcess{
 	int boardSize = 6
 
 	def currentGameState
-
+	
 	void run(){
 
 		def int gap = 5
@@ -242,18 +242,44 @@ class ControllerManager implements CSProcess{
 					}
 				}
 
-
-				// update all players
-				for(i in 0..(toPlayers.size()-1))
+				// main while loop for turns
+				for (i in 0..(toPlayers.size()-1))
 				{
-					if (toPlayers[i] != null)
+					if (toPlayers[i] == null)continue;
+					
+					
+					// players turn
+					while(true)
 					{
-						toPlayers[i].write(new GameDetails( playerDetails: playerMap,
-						pairsSpecification: pairsMap,
-						gameId: gameId))
-						println "update player $i"
+						// update all players
+						for(p in 0..(toPlayers.size()-1))
+						{
+							if (toPlayers[p] != null)
+							{
+								println "write to players"
+								toPlayers[p].write(new GameDetails( playerDetails: playerMap,
+								pairsSpecification: pairsMap,
+								gameId: gameId,
+								currentPlayer: i))
+								println "update player $p"
+							}
+						}
+						
+						// ask for cards
+						toPlayers[i].write()
+						def response = toPlayers[i].read()
+						
+					//	if (response instanceof )
+						
+						break;
 					}
 				}
+						
+						
+				
+
+
+				
 
 				/*
 				 // enrolevent instance
