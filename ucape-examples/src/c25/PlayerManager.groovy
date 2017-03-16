@@ -98,22 +98,7 @@ class PlayerManager implements CSProcess {
 			dList.change(changeGraphics, 4 + (x*5*boardSize) + (y*5))
 		}
 
-		def pairsMatch = {pairsMap, cp ->
-			// cp is a list comprising two elements each of which is a list with the [x,y]
-			// location of a square
-			// returns 0 if only one square has been chosen so far
-			//         1 if the two chosen squares have the same value (and colour)
-			//         2 if the chosen squares have different values
-			if (cp[1] == null) return 0
-			else {
-				if (cp[0] != cp[1]) {
-					def p1Data = pairsMap.get(cp[0])
-					def p2Data = pairsMap.get(cp[1])
-					if (p1Data[0] == p2Data[0]) return 1 else return 2
-				}
-				else  return 2
-			}
-		}
+	
 
 		def outerAlt = new ALT([validPoint, withdrawButton])
 		def innerAlt = new ALT([nextButton, withdrawButton])
@@ -184,31 +169,62 @@ class PlayerManager implements CSProcess {
 			while (gameDetails.currentPlayer == playerId)
 			{
 				///println "it's my turn $playerId"
-				def a = fromController.read()
-				println "fromcon" + a
+				def update = fromController.read()
+				println "fromcon"
+				
+				if (update instanceof GameDetails)
+				{
+					/*gameDetails = update
+					gameId = gameDetails.gameId
+					println "updated"
+								
+					playerMap = gameDetails.playerDetails
+					pairsMap = gameDetails.pairsSpecification
+					playerIds = playerMap.keySet()
+					playerIds.each { p ->
+						def pData = playerMap.get(p)
+						playerNames[p].write(pData[0])
+						pairsWon[p].write(" " + pData[1])
+					}
+					println 'kill me'
+					// now use pairsMap to create the board
+					pairLocs = pairsMap.keySet()
+					pairLocs.each {loc ->
+						changePairs(loc[0], loc[1], Color.LIGHT_GRAY, -1)
+					}*/
+					
+					update = fromController.read()
+				}
 				
 				getValidPoint.write (new GetValidPoint( side: side,
 					gap: gap,
 					pairsMap: pairsMap))
-				switch ( outerAlt.select() ) {
+				switch ( outerAlt.select() )
+				{
 					case WITHDRAW:
 						withdrawButton.read()
 						//toController.write(new WithdrawFromGame(id: myPlayerId))
 						enroled = false
 						break
 					case VALIDPOINT:
-					// if not turn return
+						// if not turn return
 
-						def vPoint = ((SquareCoords)validPoint.read()).location
-						chosenPairs[currentPair] = vPoint
-						currentPair = currentPair + 1
+						def coord = (SquareCoords)validPoint.read()
+					
+						def vPoint = coord.location
+
 						def pairData = pairsMap.get(vPoint)
 						println "click and change colour"
 					    changePairs(vPoint[0], vPoint[1], pairData[1], pairData[0])
 					
-						toController.write(vPoint)
+						toController.write(coord)
 				}
 			}
+			
+			
+		} // end enrol while
+	} // end run
+} // end class
 /*
 					// wrong pair
 						if ( matchOutcome == 2)  {
@@ -311,10 +327,10 @@ class PlayerManager implements CSProcess {
 						break
 				}// end of outer switch
 			} // end of while getting two pairs */
-		} // end of while enrolled loop
+	//	} // end of while enrolled loop
 		//println "kek"
 
 		//IPlabel.write("Goodbye " + playerName + ", please close game window")
-	} //end of enrolling test
-} // end run
+//	} //end of enrolling test
+//} // end run
 

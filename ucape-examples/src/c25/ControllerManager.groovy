@@ -36,7 +36,7 @@ class ControllerManager implements CSProcess{
 	int boardSize = 6
 
 	def currentGameState
-	
+
 	void run(){
 
 		def int gap = 5
@@ -155,6 +155,23 @@ class ControllerManager implements CSProcess{
 		} // end createPairs
 
 
+		def pairsMatch = {cp ->
+			// cp is a list comprising two elements each of which is a list with the [x,y]
+			// location of a square
+			// returns 0 if only one square has been chosen so far
+			//         1 if the two chosen squares have the same value (and colour)
+			//         2 if the chosen squares have different values
+			if (cp[1] == null) return 0
+			else {
+				if (cp[0] != cp[1]) {
+					def p1Data = pairsMap.get(cp[0])
+					def p2Data = pairsMap.get(cp[1])
+					if (p1Data[0] == p2Data[0]) return 1 else return 2
+				}
+				else  return 2
+			}
+		}
+
 		// removed node
 
 
@@ -246,15 +263,20 @@ class ControllerManager implements CSProcess{
 				for (i in 0..(toPlayers.size()-1))
 				{
 					if (toPlayers[i] == null)continue;
-					
-					def stillTurn = true
-					
+
+					def chosenCards = [null, null]
+
+					def currentPair = 0
+
+					def matchOutcome = 0
+
 					// players turn
-					while(stillTurn)
+					while(matchOutcome < 2)
 					{
 						// update all players
 						for(p in 0..(toPlayers.size()-1))
 						{
+							// if not null and not current player
 							if (toPlayers[p] != null)
 							{
 								println "write to players"
@@ -265,21 +287,54 @@ class ControllerManager implements CSProcess{
 								println "update player $p"
 							}
 						}
-						
+
 						// ask for cards
 						toPlayers[i].write("hello")
 						def response = fromPlayers[i].read()
 						println "back to controller read in $response"
-					//	if (response instanceof )
-						stillTurn = false;
+
+						// card chosen
+						if (response instanceof SquareCoords)
+						{
+							println "sqaure"
+							chosenCards[currentPair] = response.location
+
+							println "chosenp $chosenCards[currentPair]"
+							currentPair = currentPair + 1
+
+
 						}
+						// else if withdraw
+
+						matchOutcome = pairsMatch(chosenCards)
+
+						// check for match
+						if (matchOutcome == 1)
+						{
+							pairsMap.remove(chosenCards[0])
+							pairsMap.remove(chosenCards[1])
+							println "after remove of"
+							def playerState = playerMap.get(i)
+							playerState[1] = playerState[1] + 1
+							pairsWon[i].write(" " + playerState[1])
+							playerMap.put(i, playerState)
+							pairsUnclaimed = pairsUnclaimed - 1
+							pairsConfig.write(" "+ pairsUnclaimed)
+							
+							chosenCards = [null, null]
+						}
+					}
+
+					println "end turn"
 				}
-						
-						
-				
 
 
-				
+
+
+
+
+
+
 
 				/*
 				 // enrolevent instance
