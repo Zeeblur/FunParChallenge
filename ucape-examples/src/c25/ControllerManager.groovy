@@ -25,7 +25,7 @@ class ControllerManager implements CSProcess{
 	ChannelOutput pairsConfig
 	ChannelOutputList playerNames
 	ChannelOutputList pairsWon
-	
+
 	ChannelInput receiveEvent
 	ChannelOutput getEvent
 
@@ -34,6 +34,8 @@ class ControllerManager implements CSProcess{
 	int minPairs = 6
 	int maxPairs = 18
 	int boardSize = 6
+
+	def currentGameState
 
 	void run(){
 
@@ -151,8 +153,8 @@ class ControllerManager implements CSProcess{
 				dList.change(changeGraphics, 4 + (x2*5*boardSize) + (y2*5))
 			}
 		} // end createPairs
-		
-		
+
+
 		// removed node
 
 
@@ -184,30 +186,30 @@ class ControllerManager implements CSProcess{
 
 				// request for player enrolment (if any)
 				getEvent.write(s)
-				
+
 				// read response
-				def responseFromBuffer = receiveEvent.read() 
+				def responseFromBuffer = receiveEvent.read()
 
 				if (responseFromBuffer == null)
 				{
-				//	println "nulll"
+					//	println "nulll"
 					// do nothing
 				}
 				else if (responseFromBuffer instanceof EnrolEvent)
 				{
-					
+
 					def playerDetails = (EnrolEvent)responseFromBuffer
 					def playerName = playerDetails.name
-					
-					println "player name ${playerName}"
-					
-					def playerToAddr = playerDetails.toPlayerChannelLocation
-					
 
-					
+					println "player name ${playerName}"
+
+					def playerToAddr = playerDetails.toPlayerChannelLocation
+
+
+
 					println "$playerToAddr"
 					def playerToChan = NetChannel.one2net(playerToAddr)
-					
+
 					//println "name: ${playerDetails.name}"
 					if (availablePlayerIds.size() > 0) {
 						currentPlayerId = availablePlayerIds. pop()
@@ -216,19 +218,19 @@ class ControllerManager implements CSProcess{
 						println " 2"
 						pairsWon[currentPlayerId].write(" " + 0)
 						toPlayers[currentPlayerId] = playerToChan
-						
+
 						println "curr player id: " + currentPlayerId + " " + toPlayers[currentPlayerId]
-						
+
 						fromPlayers[currentPlayerId] = NetChannel.net2one()
 						def fromLoc = fromPlayers[currentPlayerId].getLocation()
 						println " 3"
 						// send location to channel
-						toPlayers[currentPlayerId].write(fromLoc)
-						
+						toPlayers[currentPlayerId].write(new SendGameDetails(gameId: gameId, playerId: currentPlayerId, controllerLocation: fromLoc))
+
 						def a = fromPlayers[currentPlayerId].read()
-						
-						
-						
+
+
+
 						// new EnrolDetails(id: currentPlayerId) )
 						println " 4 from $currentPlayerId $a"
 						playerMap.put(currentPlayerId, [playerName, 0]) // [name, pairs claimed]
@@ -237,74 +239,83 @@ class ControllerManager implements CSProcess{
 					{
 						// no new players can join the game
 						playerToChan.write(new EnrolDetails(id: -1))
-					} 
+					}
+				}
+
+
+				// update all players
+				for(i in 0..(toPlayers.size()-1))
+				{
+					if (toPlayers[i] != null)
+					{
+						toPlayers[i].write(new GameDetails( playerDetails: playerMap,
+						pairsSpecification: pairsMap,
+						gameId: gameId))
+						println "update player $i"
+					}
 				}
 
 				/*
-				// enrolevent instance
-				if (o instanceof EnrolEvent)
-				{
-					
-					
-				}
-				else if ( o instanceof GetGameDetails) 
-				{
-					def ggd = (GetGameDetails)o
-					def id = ggd.id
-					println "player ID gg request " + id
-					toPlayers[id].write(new GameDetails( playerDetails: playerMap,
-					pairsSpecification: pairsMap,
-					gameId: gameId))
-				}
-				else if ( o instanceof ClaimPair)
-				{
-					def claimPair = (ClaimPair)o
-					def gameNo = claimPair.gameId
-					def id = claimPair.id
-					def p1 = claimPair.p1
-					def p2 = claimPair.p2
-					if ( gameId == gameNo){
-						if ((pairsMap.get(p1) != null) ) {
-							// pair can be claimed
-							//println "before remove of $p1, $p2"
-							//pairsMap.each {println "$it"}
-							pairsMap.remove(p2)
-							pairsMap.remove(p1)
-							//println "after remove of $p1, $p2"
-							//pairsMap.each {println "$it"}
-							def playerState = playerMap.get(id)
-							playerState[1] = playerState[1] + 1
-							pairsWon[id].write(" " + playerState[1])
-							playerMap.put(id, playerState)
-							pairsUnclaimed = pairsUnclaimed - 1
-							pairsConfig.write(" "+ pairsUnclaimed)
-							running = (pairsUnclaimed != 0)
-						}
-						else
-						{
-							//println "cannot claim pair: $p1, $p2"
-						}
-					}
-				}
-				else
-				{
-					/*def withdraw = (WithdrawFromGame)o
-					 def id = withdraw.id
-					 def playerState = playerMap.get(id)
-					 println "Player: ${playerState[0]} claimed ${playerState[1]} pairs"
-					 playerNames[id].write("       ")
-					 pairsWon[id].write("   ")
-					 toPlayers[id] = null
-					 availablePlayerIds << id
-					 availablePlayerIds =  availablePlayerIds.sort().reverse()
-
-					println "hello"
-				} // end else if chain
-				
-				*/
+				 // enrolevent instance
+				 if (o instanceof EnrolEvent)
+				 {
+				 }
+				 else if ( o instanceof GetGameDetails) 
+				 {
+				 def ggd = (GetGameDetails)o
+				 def id = ggd.id
+				 println "player ID gg request " + id
+				 toPlayers[id].write(new GameDetails( playerDetails: playerMap,
+				 pairsSpecification: pairsMap,
+				 gameId: gameId))
+				 }
+				 else if ( o instanceof ClaimPair)
+				 {
+				 def claimPair = (ClaimPair)o
+				 def gameNo = claimPair.gameId
+				 def id = claimPair.id
+				 def p1 = claimPair.p1
+				 def p2 = claimPair.p2
+				 if ( gameId == gameNo){
+				 if ((pairsMap.get(p1) != null) ) {
+				 // pair can be claimed
+				 //println "before remove of $p1, $p2"
+				 //pairsMap.each {println "$it"}
+				 pairsMap.remove(p2)
+				 pairsMap.remove(p1)
+				 //println "after remove of $p1, $p2"
+				 //pairsMap.each {println "$it"}
+				 def playerState = playerMap.get(id)
+				 playerState[1] = playerState[1] + 1
+				 pairsWon[id].write(" " + playerState[1])
+				 playerMap.put(id, playerState)
+				 pairsUnclaimed = pairsUnclaimed - 1
+				 pairsConfig.write(" "+ pairsUnclaimed)
+				 running = (pairsUnclaimed != 0)
+				 }
+				 else
+				 {
+				 //println "cannot claim pair: $p1, $p2"
+				 }
+				 }
+				 }
+				 else
+				 {
+				 /*def withdraw = (WithdrawFromGame)o
+				 def id = withdraw.id
+				 def playerState = playerMap.get(id)
+				 println "Player: ${playerState[0]} claimed ${playerState[1]} pairs"
+				 playerNames[id].write("       ")
+				 pairsWon[id].write("   ")
+				 toPlayers[id] = null
+				 availablePlayerIds << id
+				 availablePlayerIds =  availablePlayerIds.sort().reverse()
+				 println "hello"
+				 } // end else if chain
+				 */
 			} // while running
-			
-			
+
+
 			createBoard()
 			dList.change(display, 0)
 		} // end while true

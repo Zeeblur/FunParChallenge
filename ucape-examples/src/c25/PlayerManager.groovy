@@ -25,6 +25,8 @@ class PlayerManager implements CSProcess {
 	ChannelOutput playerManLoc
 
 	ChannelInput initialisePlayer
+	
+	ChannelOutput toInterface
 
 	int maxPlayers = 8
 	int side = 50
@@ -133,26 +135,33 @@ class PlayerManager implements CSProcess {
 		playerManLoc.write(playerLocation) // response to enrol player
 
 		println "sent waiting"
-		def e = fromController.read() // read from controller set up
+		def e = (SendGameDetails)fromController.read() // read from controller set up
 		println "Hello from controller $e"
 		
 		// create output to controller
-		def toController = NetChannel.any2net(e)
+		def toController = NetChannel.any2net(e.controllerLocation)
 		toController.write("yay")
 		
+		def playerId = e.playerId
+		
+		// send info to interface
+		initialisePlayer.read()
+		playerManLoc.write(e)		
+
 		def enroled = true
 
 		// main loop
 		while (enroled)
-		{ /*
-
+		{ 
 			def chosenPairs = [null, null]
 			createBoard()
 			dList.change (display, 0)
-			toController.write(new GetGameDetails(id: myPlayerId))
+			
+			println "wait for update"
 			def gameDetails = (GameDetails)fromController.read()
 			def gameId = gameDetails.gameId
-			IPconfig.write("Playing Game Number - " + gameId)
+			println "updated"
+						
 			def playerMap = gameDetails.playerDetails
 			def pairsMap = gameDetails.pairsSpecification
 			def playerIds = playerMap.keySet()
@@ -178,7 +187,7 @@ class PlayerManager implements CSProcess {
 				switch ( outerAlt.select() ) {
 					case WITHDRAW:
 						withdrawButton.read()
-						toController.write(new WithdrawFromGame(id: myPlayerId))
+						//toController.write(new WithdrawFromGame(id: myPlayerId))
 						enroled = false
 						break
 					case VALIDPOINT:
@@ -189,7 +198,7 @@ class PlayerManager implements CSProcess {
 						currentPair = currentPair + 1
 						def pairData = pairsMap.get(vPoint)
 						println "click and change colour"
-					//changePairs(vPoint[0], vPoint[1], pairData[1], pairData[0])
+					    changePairs(vPoint[0], vPoint[1], pairData[1], pairData[0])
 						def matchOutcome = pairsMatch(pairsMap, chosenPairs)
 
 					// wrong pair
@@ -213,18 +222,18 @@ class PlayerManager implements CSProcess {
 								case WITHDRAW:
 								// withdraw from game
 									withdrawButton.read()
-									toController.write(new WithdrawFromGame(id: myPlayerId))
+								//	toController.write(new WithdrawFromGame(id: myPlayerId))
 									enroled = false
 									break
 							} // end inner switch
 						} else if ( matchOutcome == 1) {
 							notMatched = false
 							// match found send to controller new pair claimed
-							toController.write(new ClaimPair ( id: myPlayerId,
-							gameId: gameId,
-							p1: chosenPairs[0],
-							p2: chosenPairs[1]))
-						}
+						//	toController.write(new ClaimPair ( id: myPlayerId,
+							//gameId: gameId,
+						//	p1: chosenPairs[0],
+							//p2: chosenPairs[1]))
+						}//
 						break
 				}// end of outer switch
 			} // end of while getting two pairs */

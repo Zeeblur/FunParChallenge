@@ -199,8 +199,8 @@ class ControllerManager2 implements CSProcess{
 						// no new players can join the game
 						playerToChan.write(new EnrolDetails(id: -1))
 					}
-				} else if ( o instanceof GetGameDetails) {
-					def ggd = (GetGameDetails)o
+				} else if ( o instanceof SendGameDetails) {
+					def ggd = (SendGameDetails)o
 					def id = ggd.id
 					println "player ID gg request " + id
 					toPlayers[id].write(new GameDetails( playerDetails: playerMap,

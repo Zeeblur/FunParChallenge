@@ -64,21 +64,25 @@ class EnrolPlayer implements CSProcess {
 		toController.write(enrolEvent) // Request as client to controller server
 		println " sent $name"
 		
-	//	def enrolDetails = (EnrolDetails)fromController.read() 	// read response from controller server
 		
-		/*
-		def myPlayerId = enrolDetails.id
+		// ask for player id
+		initialisePlayer.write()
+		def enrolDetails = (SendGameDetails)playerManLoc.read() 	// read response from controller server
+		
+		def myPlayerId = enrolDetails.playerId
 		def enroled = true
 		def unclaimedPairs = 0
 		if (myPlayerId == -1) {
 			enroled = false
-			IPlabel.write("Sorry " + playerName + ", there are too many players enroled in this PAIRS game")
+			IPlabel.write("Sorry " + name + ", there are too many players enroled in this PAIRS game")
 			IPconfig.write("  Please close the game window")
 		}
 		else {
-			IPlabel.write("Hi " + playerName + ", you are now enroled in the PAIRS game")
-			IPconfig.write(" ")
-			*/
+			IPlabel.write("Hi " + name + ", you are now enroled in the PAIRS game")
+			IPconfig.write("Playing Game Number - " + enrolDetails.gameId)
+		}
+		
+		
 	
 	}
 }
