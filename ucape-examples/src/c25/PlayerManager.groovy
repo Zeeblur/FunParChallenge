@@ -25,7 +25,7 @@ class PlayerManager implements CSProcess {
 	ChannelOutput playerManLoc
 
 	ChannelInput initialisePlayer
-	
+
 	ChannelOutput toInterface
 
 	int maxPlayers = 8
@@ -92,13 +92,13 @@ class PlayerManager implements CSProcess {
 			xPos = xPos + graphicsPos
 			yPos = yPos + graphicsPos
 			if ( p >= 0)
-				changeGraphics[4] = new GraphicsCommand.DrawString("   " + p, xPos, yPos)
+			changeGraphics[4] = new GraphicsCommand.DrawString("   " + p, xPos, yPos)
 			else
-				changeGraphics[4] = new GraphicsCommand.DrawString(" ??", xPos, yPos)
+			changeGraphics[4] = new GraphicsCommand.DrawString(" ??", xPos, yPos)
 			dList.change(changeGraphics, 4 + (x*5*boardSize) + (y*5))
 		}
 
-	
+
 
 		def outerAlt = new ALT([validPoint, withdrawButton])
 		def innerAlt = new ALT([nextButton, withdrawButton])
@@ -122,33 +122,33 @@ class PlayerManager implements CSProcess {
 		println "sent waiting"
 		def e = (SendGameDetails)fromController.read() // read from controller set up
 		println "Hello from controller $e"
-		
+
 		// create output to controller
 		def toController = NetChannel.any2net(e.controllerLocation)
 		toController.write("yay")
-		
+
 		def playerId = e.playerId
-		
+
 		// send info to interface
 		initialisePlayer.read()
-		playerManLoc.write(e)		
+		playerManLoc.write(e)
 
 		def enroled = true
 
 		// main loop
 		while (enroled)
-		{ 
-			
-			
+		{
+
+
 			def chosenPairs = [null, null]
 			createBoard()
 			dList.change (display, 0)
-			
+
 			println "wait for update"
 			def gameDetails = (GameDetails)fromController.read()
 			def gameId = gameDetails.gameId
 			println "updated"
-						
+
 			def playerMap = gameDetails.playerDetails
 			def pairsMap = gameDetails.pairsSpecification
 			def playerIds = playerMap.keySet()
@@ -163,21 +163,40 @@ class PlayerManager implements CSProcess {
 			pairLocs.each {loc ->
 				changePairs(loc[0], loc[1], Color.LIGHT_GRAY, -1)
 			}
-			def currentPair = 0
-			def notMatched = true
-			
+
+
+			//def currentPair = 0
+			//def notMatched = true
+
+			def selection = gameDetails.currentSelection
+
+			// highlight any chosen squares
+			for(i in 0..selection.size()-1)
+			{
+				def squarePoint = selection[i]
+
+				def pairData = pairsMap.get(squarePoint)
+
+				if (squarePoint != null)
+				{
+					changePairs(squarePoint[0], squarePoint[1], pairData[1], pairData[0])
+				}
+			}
+
+
+
 			while (gameDetails.currentPlayer == playerId)
 			{
 				///println "it's my turn $playerId"
 				def update = fromController.read()
 				println "fromcon"
-				
+
 				if (update instanceof GameDetails)
 				{
-					/*gameDetails = update
+					gameDetails = update
 					gameId = gameDetails.gameId
-					println "updated"
-								
+					println "UPDATED"
+
 					playerMap = gameDetails.playerDetails
 					pairsMap = gameDetails.pairsSpecification
 					playerIds = playerMap.keySet()
@@ -186,151 +205,149 @@ class PlayerManager implements CSProcess {
 						playerNames[p].write(pData[0])
 						pairsWon[p].write(" " + pData[1])
 					}
-					println 'kill me'
+
 					// now use pairsMap to create the board
 					pairLocs = pairsMap.keySet()
-					pairLocs.each {loc ->
-						changePairs(loc[0], loc[1], Color.LIGHT_GRAY, -1)
-					}*/
-					
-					update = fromController.read()
+					//pairLocs.each {loc ->
+					//	changePairs(loc[0], loc[1], Color.LIGHT_GRAY, -1)
+					//}
+					//println 'kill me waiting for a point'
+					//update = fromController.read()
+					//println "read instruction for point"
 				}
-				
-				getValidPoint.write (new GetValidPoint( side: side,
+				else
+				{				
+					println "ASK FOR POINT"
+					getValidPoint.write (new GetValidPoint( side: side,
 					gap: gap,
 					pairsMap: pairsMap))
-				switch ( outerAlt.select() )
-				{
-					case WITHDRAW:
+					switch ( outerAlt.select() )
+					{
+						case WITHDRAW:
 						withdrawButton.read()
 						//toController.write(new WithdrawFromGame(id: myPlayerId))
 						enroled = false
 						break
-					case VALIDPOINT:
+						case VALIDPOINT:
 						// if not turn return
 
 						def coord = (SquareCoords)validPoint.read()
-					
+
 						def vPoint = coord.location
 
 						def pairData = pairsMap.get(vPoint)
 						println "click and change colour"
-					    changePairs(vPoint[0], vPoint[1], pairData[1], pairData[0])
-					
+						changePairs(vPoint[0], vPoint[1], pairData[1], pairData[0])
+
 						toController.write(coord)
+						println "after write square"
+					}
 				}
 			}
-			
-			
+
+
 		} // end enrol while
 	} // end run
 } // end class
 /*
-					// wrong pair
-						if ( matchOutcome == 2)  {
-							nextPairConfig.write("SELECT NEXT PAIR")
-							switch (innerAlt.select()){
-								case NEXT:
-								// reset selected buttons
-									nextButton.read()
-									nextPairConfig.write(" ")
-									def p1 = chosenPairs[0]
-									def p2 = chosenPairs[1]
-									changePairs(p1[0], p1[1], Color.LIGHT_GRAY, -1)
-									changePairs(p2[0], p2[1], Color.LIGHT_GRAY, -1)
-									chosenPairs = [null, null]
-									currentPair = 0
+ // wrong pair
+ if ( matchOutcome == 2)  {
+ nextPairConfig.write("SELECT NEXT PAIR")
+ switch (innerAlt.select()){
+ case NEXT:
+ // reset selected buttons
+ nextButton.read()
+ nextPairConfig.write(" ")
+ def p1 = chosenPairs[0]
+ def p2 = chosenPairs[1]
+ changePairs(p1[0], p1[1], Color.LIGHT_GRAY, -1)
+ changePairs(p2[0], p2[1], Color.LIGHT_GRAY, -1)
+ chosenPairs = [null, null]
+ currentPair = 0
+ /// change turn
+ break
+ case WITHDRAW:
+ // withdraw from game
+ withdrawButton.read()
+ //	toController.write(new WithdrawFromGame(id: myPlayerId))
+ enroled = false
+ break
+ } // end inner switch
+ } else if ( matchOutcome == 1) {
+ notMatched = false
+ // match found send to controller new pair claimed
+ toController.write(new ClaimPair ( id: myPlayerId,
+ gameId: gameId,
+ p1: chosenPairs[0],
+ p2: chosenPairs[1]))
+ }//
+ break */
+//}// end of outer switch
 
-								/// change turn
 
-									break
-								case WITHDRAW:
-								// withdraw from game
-									withdrawButton.read()
-								//	toController.write(new WithdrawFromGame(id: myPlayerId))
-									enroled = false
-									break
-							} // end inner switch
-						} else if ( matchOutcome == 1) {
-							notMatched = false
-							// match found send to controller new pair claimed
-							toController.write(new ClaimPair ( id: myPlayerId,
-							gameId: gameId,
-							p1: chosenPairs[0],
-							p2: chosenPairs[1]))
-						}//
-						break */
-			//}// end of outer switch
 
-			
-			
-			
-			
-			
-			/*
-			while ((chosenPairs[1] == null) && (enroled) && (notMatched)) {
-				println "while"
 
-				getValidPoint.write (new GetValidPoint( side: side,
-				gap: gap,
-				pairsMap: pairsMap))
-				switch ( outerAlt.select() ) {
-					case WITHDRAW:
-						withdrawButton.read()
-						//toController.write(new WithdrawFromGame(id: myPlayerId))
-						enroled = false
-						break
-					case VALIDPOINT:
-					// if not turn return
 
-						def vPoint = ((SquareCoords)validPoint.read()).location
-						chosenPairs[currentPair] = vPoint
-						currentPair = currentPair + 1
-						def pairData = pairsMap.get(vPoint)
-						println "click and change colour"
-					    changePairs(vPoint[0], vPoint[1], pairData[1], pairData[0])
-						def matchOutcome = pairsMatch(pairsMap, chosenPairs)
 
-					// wrong pair
-						if ( matchOutcome == 2)  {
-							nextPairConfig.write("SELECT NEXT PAIR")
-							switch (innerAlt.select()){
-								case NEXT:
-								// reset selected buttons
-									nextButton.read()
-									nextPairConfig.write(" ")
-									def p1 = chosenPairs[0]
-									def p2 = chosenPairs[1]
-									changePairs(p1[0], p1[1], Color.LIGHT_GRAY, -1)
-									changePairs(p2[0], p2[1], Color.LIGHT_GRAY, -1)
-									chosenPairs = [null, null]
-									currentPair = 0
+/*
+ while ((chosenPairs[1] == null) && (enroled) && (notMatched)) {
+ println "while"
+ getValidPoint.write (new GetValidPoint( side: side,
+ gap: gap,
+ pairsMap: pairsMap))
+ switch ( outerAlt.select() ) {
+ case WITHDRAW:
+ withdrawButton.read()
+ //toController.write(new WithdrawFromGame(id: myPlayerId))
+ enroled = false
+ break
+ case VALIDPOINT:
+ // if not turn return
+ def vPoint = ((SquareCoords)validPoint.read()).location
+ chosenPairs[currentPair] = vPoint
+ currentPair = currentPair + 1
+ def pairData = pairsMap.get(vPoint)
+ println "click and change colour"
+ changePairs(vPoint[0], vPoint[1], pairData[1], pairData[0])
+ def matchOutcome = pairsMatch(pairsMap, chosenPairs)
+ // wrong pair
+ if ( matchOutcome == 2)  {
+ nextPairConfig.write("SELECT NEXT PAIR")
+ switch (innerAlt.select()){
+ case NEXT:
+ // reset selected buttons
+ nextButton.read()
+ nextPairConfig.write(" ")
+ def p1 = chosenPairs[0]
+ def p2 = chosenPairs[1]
+ changePairs(p1[0], p1[1], Color.LIGHT_GRAY, -1)
+ changePairs(p2[0], p2[1], Color.LIGHT_GRAY, -1)
+ chosenPairs = [null, null]
+ currentPair = 0
+ /// change turn
+ break
+ case WITHDRAW:
+ // withdraw from game
+ withdrawButton.read()
+ //	toController.write(new WithdrawFromGame(id: myPlayerId))
+ enroled = false
+ break
+ } // end inner switch
+ } else if ( matchOutcome == 1) {
+ notMatched = false
+ // match found send to controller new pair claimed
+ toController.write(new ClaimPair ( id: myPlayerId,
+ gameId: gameId,
+ p1: chosenPairs[0],
+ p2: chosenPairs[1]))
+ }//
+ break
+ }// end of outer switch
+ } // end of while getting two pairs */
+//	} // end of while enrolled loop
+//println "kek"
 
-								/// change turn
-
-									break
-								case WITHDRAW:
-								// withdraw from game
-									withdrawButton.read()
-								//	toController.write(new WithdrawFromGame(id: myPlayerId))
-									enroled = false
-									break
-							} // end inner switch
-						} else if ( matchOutcome == 1) {
-							notMatched = false
-							// match found send to controller new pair claimed
-							toController.write(new ClaimPair ( id: myPlayerId,
-							gameId: gameId,
-							p1: chosenPairs[0],
-							p2: chosenPairs[1]))
-						}//
-						break
-				}// end of outer switch
-			} // end of while getting two pairs */
-	//	} // end of while enrolled loop
-		//println "kek"
-
-		//IPlabel.write("Goodbye " + playerName + ", please close game window")
+//IPlabel.write("Goodbye " + playerName + ", please close game window")
 //	} //end of enrolling test
 //} // end run
 
