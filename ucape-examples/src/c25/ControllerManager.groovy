@@ -247,9 +247,10 @@ class ControllerManager implements CSProcess{
 				{
 					if (toPlayers[i] == null)continue;
 					
+					def stillTurn = true
 					
 					// players turn
-					while(true)
+					while(stillTurn)
 					{
 						// update all players
 						for(p in 0..(toPlayers.size()-1))
@@ -266,13 +267,12 @@ class ControllerManager implements CSProcess{
 						}
 						
 						// ask for cards
-						toPlayers[i].write()
-						def response = toPlayers[i].read()
-						
+						toPlayers[i].write("hello")
+						def response = fromPlayers[i].read()
+						println "back to controller read in $response"
 					//	if (response instanceof )
-						
-						break;
-					}
+						stillTurn = false;
+						}
 				}
 						
 						

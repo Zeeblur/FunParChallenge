@@ -183,8 +183,70 @@ class PlayerManager implements CSProcess {
 			
 			while (gameDetails.currentPlayer == playerId)
 			{
-				println "it's my turn $playerId"
+				///println "it's my turn $playerId"
+				def a = fromController.read()
+				println "fromcon" + a
+				
+				getValidPoint.write (new GetValidPoint( side: side,
+					gap: gap,
+					pairsMap: pairsMap))
+				switch ( outerAlt.select() ) {
+					case WITHDRAW:
+						withdrawButton.read()
+						//toController.write(new WithdrawFromGame(id: myPlayerId))
+						enroled = false
+						break
+					case VALIDPOINT:
+					// if not turn return
+
+						def vPoint = ((SquareCoords)validPoint.read()).location
+						chosenPairs[currentPair] = vPoint
+						currentPair = currentPair + 1
+						def pairData = pairsMap.get(vPoint)
+						println "click and change colour"
+					    changePairs(vPoint[0], vPoint[1], pairData[1], pairData[0])
+					
+						toController.write(vPoint)
+				}
 			}
+/*
+					// wrong pair
+						if ( matchOutcome == 2)  {
+							nextPairConfig.write("SELECT NEXT PAIR")
+							switch (innerAlt.select()){
+								case NEXT:
+								// reset selected buttons
+									nextButton.read()
+									nextPairConfig.write(" ")
+									def p1 = chosenPairs[0]
+									def p2 = chosenPairs[1]
+									changePairs(p1[0], p1[1], Color.LIGHT_GRAY, -1)
+									changePairs(p2[0], p2[1], Color.LIGHT_GRAY, -1)
+									chosenPairs = [null, null]
+									currentPair = 0
+
+								/// change turn
+
+									break
+								case WITHDRAW:
+								// withdraw from game
+									withdrawButton.read()
+								//	toController.write(new WithdrawFromGame(id: myPlayerId))
+									enroled = false
+									break
+							} // end inner switch
+						} else if ( matchOutcome == 1) {
+							notMatched = false
+							// match found send to controller new pair claimed
+							toController.write(new ClaimPair ( id: myPlayerId,
+							gameId: gameId,
+							p1: chosenPairs[0],
+							p2: chosenPairs[1]))
+						}//
+						break */
+			//}// end of outer switch
+
+			
 			
 			
 			
