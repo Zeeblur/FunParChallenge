@@ -313,8 +313,9 @@ class ControllerManager implements CSProcess{
 							pairsUnclaimed = pairsUnclaimed - 1
 							pairsConfig.write(" "+ pairsUnclaimed)
 
-						//	chosenCards[0] = null
-						//	chosenCards[1] = null
+							chosenCards[0] = null
+							chosenCards[1] = null
+							currentPair = 0
 						}
 					}
 

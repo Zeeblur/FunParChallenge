@@ -139,15 +139,17 @@ class PlayerManager implements CSProcess {
 		while (enroled)
 		{
 
+			println "wait for update"
+			def gameDetails = (GameDetails)fromController.read()
+			def gameId = gameDetails.gameId
+			println "updated"
 
 			def chosenPairs = [null, null]
 			createBoard()
 			dList.change (display, 0)
 
-			println "wait for update"
-			def gameDetails = (GameDetails)fromController.read()
-			def gameId = gameDetails.gameId
-			println "updated"
+			// player turn
+			playerManLoc.write(gameDetails.currentPlayer)
 
 			def playerMap = gameDetails.playerDetails
 			def pairsMap = gameDetails.pairsSpecification
@@ -177,13 +179,11 @@ class PlayerManager implements CSProcess {
 
 				def pairData = pairsMap.get(squarePoint)
 
-				if (squarePoint != null)
+				if (squarePoint != null && pairData != null)
 				{
 					changePairs(squarePoint[0], squarePoint[1], pairData[1], pairData[0])
 				}
 			}
-
-
 
 			while (gameDetails.currentPlayer == playerId)
 			{

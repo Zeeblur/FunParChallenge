@@ -82,7 +82,11 @@ class EnrolPlayer implements CSProcess {
 			IPconfig.write("Playing Game Number - " + enrolDetails.gameId)
 		}
 		
-		
+		while (true)
+		{
+			def playerTurn = playerManLoc.read()
+			IPconfig.write("Player number " + playerTurn + "'s turn")
+		}
 	
 	}
 }
