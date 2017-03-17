@@ -92,9 +92,9 @@ class PlayerManager implements CSProcess {
 			xPos = xPos + graphicsPos
 			yPos = yPos + graphicsPos
 			if ( p >= 0)
-			changeGraphics[4] = new GraphicsCommand.DrawString("   " + p, xPos, yPos)
+				changeGraphics[4] = new GraphicsCommand.DrawString("   " + p, xPos, yPos)
 			else
-			changeGraphics[4] = new GraphicsCommand.DrawString(" ??", xPos, yPos)
+				changeGraphics[4] = new GraphicsCommand.DrawString(" ??", xPos, yPos)
 			dList.change(changeGraphics, 4 + (x*5*boardSize) + (y*5))
 		}
 
@@ -128,7 +128,7 @@ class PlayerManager implements CSProcess {
 		toController.write("yay")
 
 		def playerId = e.playerId
-		
+
 		// send info to interface
 		initialisePlayer.read()
 		playerManLoc.write(e)
@@ -187,7 +187,7 @@ class PlayerManager implements CSProcess {
 			while (gameDetails.currentPlayer == playerId)
 			{
 
-				
+
 				///println "it's my turn $playerId"
 				def update = fromController.read()
 				println "fromcon"
@@ -196,10 +196,10 @@ class PlayerManager implements CSProcess {
 				{
 					gameDetails = update
 					gameId = gameDetails.gameId
-					
+
 					// player turn
 					playerManLoc.write(gameDetails.playerNames[gameDetails.currentPlayer])
-					
+
 					println "UPDATED"
 
 					playerMap = gameDetails.playerDetails
@@ -221,7 +221,7 @@ class PlayerManager implements CSProcess {
 					//println "read instruction for point"
 				}
 				else
-				{				
+				{
 					println "ASK FOR POINT"
 					getValidPoint.write (new GetValidPoint( side: side,
 					gap: gap,
@@ -229,23 +229,23 @@ class PlayerManager implements CSProcess {
 					switch ( outerAlt.select() )
 					{
 						case WITHDRAW:
-						withdrawButton.read()
-						//toController.write(new WithdrawFromGame(id: myPlayerId))
-						enroled = false
-						break
+							withdrawButton.read()
+							toController.write(new WithdrawFromGame(id: playerId))
+							enroled = false
+							break
 						case VALIDPOINT:
 						// if not turn return
 
-						def coord = (SquareCoords)validPoint.read()
+							def coord = (SquareCoords)validPoint.read()
 
-						def vPoint = coord.location
+							def vPoint = coord.location
 
-						def pairData = pairsMap.get(vPoint)
-						println "click and change colour"
-						changePairs(vPoint[0], vPoint[1], pairData[1], pairData[0])
+							def pairData = pairsMap.get(vPoint)
+							println "click and change colour"
+							changePairs(vPoint[0], vPoint[1], pairData[1], pairData[0])
 
-						toController.write(coord)
-						println "after write square"
+							toController.write(coord)
+							println "after write square"
 					}
 				}
 			}
