@@ -10,4 +10,6 @@ class GameDetails implements Serializable {
 	
 	def currentPlayer
 	def currentSelection
+	
+	def playerNames
 }

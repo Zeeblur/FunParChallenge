@@ -128,7 +128,7 @@ class PlayerManager implements CSProcess {
 		toController.write("yay")
 
 		def playerId = e.playerId
-
+		
 		// send info to interface
 		initialisePlayer.read()
 		playerManLoc.write(e)
@@ -149,7 +149,7 @@ class PlayerManager implements CSProcess {
 			dList.change (display, 0)
 
 			// player turn
-			playerManLoc.write(gameDetails.currentPlayer)
+			playerManLoc.write(gameDetails.playerNames[gameDetails.currentPlayer])
 
 			def playerMap = gameDetails.playerDetails
 			def pairsMap = gameDetails.pairsSpecification
@@ -187,6 +187,8 @@ class PlayerManager implements CSProcess {
 
 			while (gameDetails.currentPlayer == playerId)
 			{
+
+				
 				///println "it's my turn $playerId"
 				def update = fromController.read()
 				println "fromcon"
@@ -195,6 +197,10 @@ class PlayerManager implements CSProcess {
 				{
 					gameDetails = update
 					gameId = gameDetails.gameId
+					
+					// player turn
+					playerManLoc.write(gameDetails.playerNames[gameDetails.currentPlayer])
+					
 					println "UPDATED"
 
 					playerMap = gameDetails.playerDetails

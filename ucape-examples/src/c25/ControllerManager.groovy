@@ -200,6 +200,9 @@ class ControllerManager implements CSProcess{
 			statusConfig.write("Running")
 			def running = (pairsUnclaimed != 0)
 			def s = 1
+
+			def connectedNames = [maxPlayers]
+
 			while (running)
 			{
 
@@ -235,6 +238,11 @@ class ControllerManager implements CSProcess{
 						println " 1"
 						playerNames[currentPlayerId].write(playerName)
 						println " 2"
+						
+						// add name
+						connectedNames[currentPlayerId] = playerName
+	
+						
 						pairsWon[currentPlayerId].write(" " + 0)
 						toPlayers[currentPlayerId] = playerToChan
 
@@ -277,7 +285,7 @@ class ControllerManager implements CSProcess{
 					// players turn
 					while(matchOutcome < 2)
 					{
-						updatePlayers(toPlayers, playerMap, pairsMap, gameId, i, chosenCards)
+						updatePlayers(toPlayers, playerMap, pairsMap, gameId, i, chosenCards, connectedNames)
 
 						// ask for cards
 						toPlayers[i].write()
@@ -293,7 +301,7 @@ class ControllerManager implements CSProcess{
 							println "chosenp $chosenCards[currentPair]"
 							currentPair = currentPair + 1
 
-							updatePlayers(toPlayers, playerMap, pairsMap, gameId, i, chosenCards)
+							updatePlayers(toPlayers, playerMap, pairsMap, gameId, i, chosenCards, connectedNames)
 
 						}
 						// else if withdraw
@@ -323,15 +331,15 @@ class ControllerManager implements CSProcess{
 				}
 
 			}
-			
+
 			createBoard()
 			dList.change(display, 0)
-			
+
 		} // end while true
 	} // end run
 
 
-	def updatePlayers(def toPlayers, def playerMap, def pairsMap, def gameId, def currPlayer, def cards)
+	def updatePlayers(def toPlayers, def playerMap, def pairsMap, def gameId, def currPlayer, def cards, def names)
 	{
 		// update all players
 		for(p in 0..(toPlayers.size()-1))
@@ -344,7 +352,8 @@ class ControllerManager implements CSProcess{
 				pairsSpecification: pairsMap,
 				gameId: gameId,
 				currentPlayer: currPlayer,
-				currentSelection: cards))
+				currentSelection: cards,
+				playerNames: names))
 				println "update player $p"
 			}
 		}
