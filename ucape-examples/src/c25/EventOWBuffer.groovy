@@ -20,17 +20,20 @@ class EventOWBuffer implements CSProcess
 	  
 	  def event
 	  def reading = false
-	  
+	  def eventList = []
 	  while (true) {
 
 		// chose between in from reciever and get channel
 		def index = owbAlt.priSelect ( preCon )
+		
+
 
 		switch ( index ) {
 		  case INCHANNEL:
 
 			event = inChannelFromRec.read().copy()
-
+			eventList.add(event)
+			println eventList
 			// enrol player event has been read * don't set event to null
 			reading = true
 			break
@@ -41,9 +44,9 @@ class EventOWBuffer implements CSProcess
 
 			// if not read from enrolplayer event is null
 			if (!reading)
-				event = null
+				eventList.clear()//event = null
 				
-			outChannelToCon.write ( event )
+			outChannelToCon.write ( eventList)
 			
 			// reading is finished
 			reading = false

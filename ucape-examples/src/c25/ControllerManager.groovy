@@ -188,6 +188,73 @@ class ControllerManager implements CSProcess{
 		def pairsUnclaimed = 0
 		def gameId = 0
 
+		def connectedNames = [maxPlayers]
+
+		def checkforEnrol = {
+
+
+			def s = 1
+			// request for player enrolment (if any)
+			getEvent.write(s)
+
+
+			// read response
+			def responseFromBuffer = receiveEvent.read()
+			if (responseFromBuffer.size() > 0)
+			{
+				println "response " + responseFromBuffer
+
+				for (r in 0..responseFromBuffer.size())
+				{
+					if (responseFromBuffer[r] instanceof EnrolEvent)
+					{
+
+						def playerDetails = (EnrolEvent)responseFromBuffer[r]
+						def playerName = playerDetails.name
+
+						println "player name ${playerName}"
+
+						def playerToAddr = playerDetails.toPlayerChannelLocation
+
+
+
+						println "$playerToAddr"
+						def playerToChan = NetChannel.one2net(playerToAddr)
+
+						//println "name: ${playerDetails.name}"
+						if (availablePlayerIds.size() > 0) {
+							currentPlayerId = availablePlayerIds. pop()
+							playerNames[currentPlayerId].write(playerName)
+
+							// add name
+							connectedNames[currentPlayerId] = playerName
+
+
+							pairsWon[currentPlayerId].write(" " + 0)
+							toPlayers[currentPlayerId] = playerToChan
+
+							println "curr player id: " + currentPlayerId + " " + toPlayers[currentPlayerId]
+
+							fromPlayers[currentPlayerId] = NetChannel.net2one()
+							def fromLoc = fromPlayers[currentPlayerId].getLocation()
+							// send location to channel
+							toPlayers[currentPlayerId].write(new SendGameDetails(gameId: gameId, playerId: currentPlayerId, controllerLocation: fromLoc))
+
+							def a = fromPlayers[currentPlayerId].read()
+
+							println "from $currentPlayerId $a"
+							playerMap.put(currentPlayerId, [playerName, 0])
+						}
+						else
+						{
+							// no new players can join the game
+							playerToChan.write(new EnrolDetails(id: -1))
+						}
+					}
+				}
+			}
+
+		}
 
 		while (true) {
 			statusConfig.write("Creating")
@@ -199,75 +266,11 @@ class ControllerManager implements CSProcess{
 			createPairs (nPairs)
 			statusConfig.write("Running")
 			def running = (pairsUnclaimed != 0)
-			def s = 1
-
-			def connectedNames = [maxPlayers]
 
 			while (running)
 			{
 
-				// request for player enrolment (if any)
-				getEvent.write(s)
-
-				// read response
-				def responseFromBuffer = receiveEvent.read()
-
-				if (responseFromBuffer == null)
-				{
-					//	println "nulll"
-					// do nothing
-				}
-				else if (responseFromBuffer instanceof EnrolEvent)
-				{
-
-					def playerDetails = (EnrolEvent)responseFromBuffer
-					def playerName = playerDetails.name
-
-					println "player name ${playerName}"
-
-					def playerToAddr = playerDetails.toPlayerChannelLocation
-
-
-
-					println "$playerToAddr"
-					def playerToChan = NetChannel.one2net(playerToAddr)
-
-					//println "name: ${playerDetails.name}"
-					if (availablePlayerIds.size() > 0) {
-						currentPlayerId = availablePlayerIds. pop()
-						println " 1"
-						playerNames[currentPlayerId].write(playerName)
-						println " 2"
-						
-						// add name
-						connectedNames[currentPlayerId] = playerName
-	
-						
-						pairsWon[currentPlayerId].write(" " + 0)
-						toPlayers[currentPlayerId] = playerToChan
-
-						println "curr player id: " + currentPlayerId + " " + toPlayers[currentPlayerId]
-
-						fromPlayers[currentPlayerId] = NetChannel.net2one()
-						def fromLoc = fromPlayers[currentPlayerId].getLocation()
-						println " 3"
-						// send location to channel
-						toPlayers[currentPlayerId].write(new SendGameDetails(gameId: gameId, playerId: currentPlayerId, controllerLocation: fromLoc))
-
-						def a = fromPlayers[currentPlayerId].read()
-
-
-
-						// new EnrolDetails(id: currentPlayerId) )
-						println " 4 from $currentPlayerId $a"
-						playerMap.put(currentPlayerId, [playerName, 0]) // [name, pairs claimed]
-					}
-					else
-					{
-						// no new players can join the game
-						playerToChan.write(new EnrolDetails(id: -1))
-					}
-				}
+				checkforEnrol()
 
 				// main while loop for turns
 				for (i in 0..(toPlayers.size()-1))
@@ -285,6 +288,8 @@ class ControllerManager implements CSProcess{
 					// players turn
 					while(matchOutcome < 2)
 					{
+						checkforEnrol()
+
 						updatePlayers(toPlayers, playerMap, pairsMap, gameId, i, chosenCards, connectedNames)
 
 						// ask for cards

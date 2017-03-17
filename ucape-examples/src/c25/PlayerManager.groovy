@@ -138,7 +138,6 @@ class PlayerManager implements CSProcess {
 		// main loop
 		while (enroled)
 		{
-
 			println "wait for update"
 			def gameDetails = (GameDetails)fromController.read()
 			def gameId = gameDetails.gameId
