@@ -1,7 +1,7 @@
 \def\mytitle{Challenge - Pairs Game}
-\def\myauthor{Emmanuel Miras \newline Zoe Wall}
-\def\contact{40168970@napier.ac.uk \newline40182161@napier.ac.uk}
-\def\mymodule{Fundamentals of Parallel Systems (SET09109}
+\def\myauthor{Group C}
+\def\contact{40168970 \newline40182161}
+\def\mymodule{Fundamentals of Parallel Systems (SET09109)}
 
 \documentclass[10pt, a4paper]{article}
 \usepackage[a4paper,outer=1.5cm,inner=1.5cm,top=1.75cm,bottom=1.5cm]{geometry}
@@ -87,13 +87,15 @@
 
 	%it was clientserver
 	
-	Within the original implementation the Player Manager process acted as a server and the Controller Manager process acted as a client. In order to implement the required changes, the roles had to be switched. This proved to be quite straightforward, the logic needed for enrollment of the player was abstracted into a new process called Enrol Player, in doing so the Player Manager can be treated as a pure server as it no longer handles the initialisation of the player. 
+	Within the original implementation the Player Manager process acted as a server and the Controller Manager process acted as a client. In order to implement the required changes, the roles had to be switched. This proved to be quite straightforward, the logic needed for enrolment of the player was abstracted into a new process called Enrol Player, in doing so the Player Manager can be treated as a pure server as it no longer handles the initialisation of the player. 
 	
 	% logic was there, just switched channels
 	The majority of the logic for making the game work as required in the specification document was already in the system, it was mostly a matter of switching the channels around to support the new client server relationship, while also making sure the logic for each part of the system is abstracted into the correct process.
 	% use of ds: getgame details added more information. add more variables 
 
-	The data structures contained in the original implementation were sufficient for the functionality of the system. No new data structures were created, but they were edited to support new features that were added (turns, updating player boards)
+	The data structures contained in the original implementation were sufficient for the functionality of the system. No new data structures were created, but they were edited to support new features that were added (turns, updating player boards).
+	
+	The original implementation had some unnecessary classes that could be removed with the new communication structure in place simplifying the system, for example ClaimPair.groovy.
 	
 	
 	%having done this the Player Manager had no need to act as a client. %this took away the need for the player manager to be a server, as it only needs to make the first communication to enrol. after enrolment, the controller manager should control each player manager.
@@ -119,7 +121,7 @@
 	To implement player turns, the Controller Manager must keep track of every player initialised within a list. To initialise a player, a modified EnrolPlayer object, which contains the location of the player sending the request and the player id, is copied to the Controller Manager. Once the player has been enrolled they are added to a list of current players, which the Controller Manager can iterate through to request for card selections and send a map of square coordinates for updating the game state.
 	
 	\subparagraph{Updates}
-	The main change to the communications structure is to modify the behaviour of both the Player Manager and Controller Manager.	The proposed solution is to have multiple channel inputs to the Player Manager that are allocated dynamically once the player has been enrolled. In doing so, each of the Player Managers can act as pure servers. This means that the Controller Manager can issue requests to every Player Manager to update their interfaces without the risk of dead-lock. With the current structure, this causes an issue with the enrollment of players as they must initiate the connection to the Controller Manager therefore acting as clients. To solve this, the enrollment logic from the Player Manager is abstracted into another process which can act as a client. An enrollment request can therefore be copied through an event handling system using an overwriting buffer to the Controller Manager client that obeys the client-server pattern.
+	The main change to the communications structure is to modify the behaviour of both the Player Manager and Controller Manager.	The proposed solution is to have a channel from the Player Manager to send a response to the Enrol Player client that asks for the player's location to the network channel output created for the player and controller to communicate. The Enrol Player process sends the location to the controller to establish the network connection. In doing so, each of the Player Managers can act as pure servers. This means that the Controller Manager can issue requests to every Player Manager to update their interfaces without the risk of dead-lock. With the current structure, this causes an issue with the enrolment of players as they must initiate the connection to the Controller Manager therefore acting as clients. To solve this, the enrolment logic from the Player Manager is abstracted into another process which can act as a client. An enrolment request can therefore be copied through an event handling system using an overwriting buffer to the Controller Manager client that obeys the client-server pattern.
 	
 	\section{Requirement 4}
 	\subsection{Group H}
@@ -138,26 +140,31 @@
 	\end{itemize}
 	When playing the game, it was easy to understand what was going on, as relevant information about turns and points where available on the interface. The "next turn" button was 		removed, allowing for simpler interaction with the interface. There was a time delay after a turn ending, allowing each player enough time to memorize the cards selected, the game 	could benefit from a shorter time delay, because it gave the impression that the game had frozen.
 	\subparagraph{Communications structures and interactions}
-	The communication structures and interactions of the system as portrayed in the particular version of the design document provided, are not very clear, many processes are encapsulated, hiding information that is essential for understanding how the system works. There is a description available, that attempts to explain how the system would behave when running, but there is no channel interaction diagram to visually aid that description. Finally, there is no information available specifying why or how particular design choices were made.
+	The communication structures and interactions of the system as portrayed in the particular version of the design document provided, are not very clear, many processes are encapsulated, hiding information that is essential for understanding how the system works. For example, it appears the players are communicating with each other. There is a description available, that attempts to explain how the system would behave when running, but there is no channel interaction diagram to visually aid that description. Finally, there is no information available specifying why or how particular design choices were made.
 	\subparagraph{Use of Data Structures}
 	An agent was used to handle the turns in the system, the agent is "assigned" to the current player's turn, meaning that the player sends data to the controller through the agent, there is no mention of how the agent is internally structured.
 
 	For updating a player's board while an other player is currently playing, an "update" object is sent throughout the system, this seems like an efficient way to update each player's board.
 	
-
-	%The Player and the Controller still maintain the same relationship as in the base game, i.e. while enrolling, the Player is the client and the Controller is the server, and when playing this relationship is switched.
-	%, such 	as withdrawal from the game not working and clicking on the same card registering as a pair
-	
-
-	%The game was fully operational as intende
-	
-	%pair if you click itself
-	%withdraw not working
-	%delay too long?
-	
 	\subsection{Group J}
 	
-	% button
-	%working
+	\subparagraph{Functionality and ease of playing the game}
+	
+	The game implementation by Group J had all of the required features as requested in the specification document and was operational.
+	
+	The operation of the game however was less intuitive as it required the user to click a button each turn to move to the next player. There was no time out on this and it appeared as if the system had deadlocked, however it was just user error.
+	
+	Although withdraw was implemented, if withdrawing on your current turn, it would not update to the other players causing the turn to be stuck on a player that is no longer enrolled.
+	
+	\subparagraph{Communications structures and interactions}
+
+	The communication structures and interactions are not clear from the network diagram. 
+	The description of the use of the added "Point Checker" process is unclear, it seems to be an extension of the matcher process already within the sequence but includes new interactions between it and the Player Manager for sending Game Details. Presumably for validation, however this logic already exists within the Player Manager and it is unclear why this change was necessary.
+	
+	There also seems to be an issue with each Player Manager sending valid squares each time one has been clicked, regardless of the 
+	
+	\subparagraph{Use of Data Structures}
+
+	Creating a Turn object is a good idea however the supplied documentation is also unclear on how this is used within the system. It seems to be conflicting as the data stored within the Turn object is updated within the Controller and not the Player Manager. Unless it means that every click is sent as a Turn to the controller and only the current player's Turn object is read. However this seems problematic as the controller would have to act as a client and a server to both send updates and receive updates from all players simultaneously.
 	
 \end{document}
