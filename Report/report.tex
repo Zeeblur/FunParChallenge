@@ -78,7 +78,28 @@
 	\maketitle	
 	
 	
-	Preferred practical class to demonstrate: either afternoon sessions.
+	\section{Requirement 2}
+	
+%	how difficult to implement
+%	To provide a critical review, of no more than 250 words, of the supplied implementation in terms of its:
+%	Use of data structures
+%	Communication structures and interactions
+
+	%it was clientserver
+	
+	Within the original implementation the Player Manager process acted as a server and the Controller Manager process acted as a client. In order to implement the required changes, the roles had to be switched. This proved to be quite straightforward, the logic needed for enrolment of the player was abstracted into a new process called Enrol Player, in doing so the Player Manager can be treated as a pure server as it no longer handles the initialisation of the player. 
+	
+	% logic was there, just switched channels
+	
+	% use of ds: getgame details added more information. add more variables 
+	
+	
+	
+	%having done this the Player Manager had no need to act as a client. %this took away the need for the player manager to be a server, as it only needs to make the first communication to enrol. after enrolment, the controller manager should control each player manager.
+	
+	
+	
+	
 	\section{Requirement 3}
 	
 	\subsection{Process Network}
@@ -98,5 +119,24 @@
 	
 	\subparagraph{Updates}
 	The main change to the communications structure is to modify the behaviour of both the Player Manager and Controller Manager.	The proposed solution is to have multiple channel inputs to the Player Manager that are allocated dynamically once the player has been enrolled. In doing so, each of the Player Managers can act as pure servers. This means that the Controller Manager can issue requests to every Player Manager to update their interfaces without the risk of dead-lock. With the current structure, this causes an issue with the enrolment of players as they must initiate the connection to the Controller Manager therefore acting as clients. To solve this, the enrolment logic from the Player Manager is abstracted into another process which can act as a client. An enrolment request can therefore be copied through an event handling system using an overwriting buffer to the Controller Manager client that obeys the client-server pattern.
-		
+	
+	\section{Requirement 3}
+	\subsection{Group H}
+	
+%	1.	Use of data Structures
+%	2.	Communications structures and interactions
+%	3.	Did the game work as intended and if not why not?
+%	4.	Was the operation of the game intuitive and reflect the Challenge Requirements?
+
+	The game was fully operational as intende
+	
+	%pair if you click itself
+	%withdraw not working
+	%delay too long?
+	
+	\subsection{Group J}
+	
+	% button
+	%working
+	
 \end{document}
